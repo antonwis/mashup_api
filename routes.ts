@@ -12,7 +12,7 @@ const router = new Router();
 router.get("/api/test/", getEmployees)
   .get("/api/test/:name", getEmployee)
   .post("/api/test/", addEmployee)
-  .put("/api/test/", updateEmployee)
-  .delete("/api/test/", deleteEmployee);
+  .put("/api/test/:name", updateEmployee)
+  .delete("/api/test/:name", deleteEmployee);
 
 export default router;

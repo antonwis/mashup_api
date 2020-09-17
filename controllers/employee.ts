@@ -95,14 +95,40 @@ const addEmployee = async ({ request, response }: { request: any, response: any 
 };
 
 // @desc    Update employee data
-// @route   PUT /api/test/
-const updateEmployee = ({ response }: { response: any }) => {
-  response.body = "add";
+// @route   PUT /api/test/:name
+const updateEmployee = async({ params, request, response }: { params: { name: string }, request: any, response: any }) => {
+  const employee: Employee | undefined = employees.find((e) =>
+    e.firstName === params.name || e.lastName === params.name
+  );
+
+  if (employee) {
+    const body = await request.body();
+
+    const updateData: Employee = await body.value
+    employees = employees.map(e => e.firstName === params.name ? { ...e, ...updateData } : e)
+
+    response.status = 200
+    response.body = {
+      success: true,
+      data: employees
+    }
+  } else {
+    response.status = 404;
+    response.body = {
+      success: false,
+      msg: "Not found",
+    };
+  }
 };
 
-// @desc    Delete employees
-// @route   DELETE /api/test/
-const deleteEmployee = ({ response }: { response: any }) => {
-  response.body = "delete";
+// @desc    Delete employee by name
+// @route   DELETE /api/test/:name
+const deleteEmployee = ({ params, response }: { params: { name: string }, response: any }) => {
+  employees = employees.filter(e => e.firstName !== params.name && e.lastName !== params.name);
+  response.body = {
+    success: true,
+    msg: "Employee deleted"
+  }
 };
+
 export { getEmployees, getEmployee, addEmployee, updateEmployee, deleteEmployee };
